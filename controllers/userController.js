@@ -41,6 +41,41 @@ function signUp(req, res) {
 }
 
 
+function login(req, res) {
+    Models.User.findOne({ where: { email: req.body.email } }).then(user => {
+        if (user === null) {
+            res.status(401).json({
+                message: "Invalid credential"
+            });
+        } else {
+            bcryptjs.compare(req.body.password, user.password, function(err, result) {
+                if (result) {
+                    const token = jwt.sign({
+                        email: user.email,
+                        userId: user.id
+                    }, process.env.JWT_KEY, function(err, token) {
+                        res.status(200).json({
+                            message: "Authenticated",
+                            token: token
+                        });
+                    });
+                } else {
+                    res.status(401).json({
+                        message: "Invalid credential"
+                    });
+                }
+            });
+        }
+    }).catch(error => {
+        res.status(500).json({
+            message: "something going wrong",
+            error: error
+        });
+    });
+}
+
+
 module.exports = {
-    signUp: signUp
+    signUp: signUp,
+    login: login
 }
