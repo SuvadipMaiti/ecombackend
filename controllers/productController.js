@@ -1,8 +1,31 @@
-function index(req,res){
+const Models = require('../models');
+
+function index(req, res) {
     const products = 'product list';
     res.send(products);
 }
 
+function create(req, res) {
+    const newProduct = {
+        name: req.body.name,
+        description: req.body.description,
+        image: req.body.image
+    }
+
+    Models.Product.create(newProduct).then(result => {
+        res.status(201).json({
+            message: "Product submited.",
+            data: result
+        });
+    }).catch(error => {
+        res.status(500).json({
+            message: "something going wrong",
+            error: error
+        });
+    });
+}
+
 module.exports = {
-    index:index
+    index: index,
+    create: create
 }
