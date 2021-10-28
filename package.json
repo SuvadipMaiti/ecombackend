@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/SuvadipMaiti/ecombackend/issues"
   },
-  "homepage": "https://github.com/SuvadipMaiti/ecombackend#readme"
+  "homepage": "https://github.com/SuvadipMaiti/ecombackend#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
