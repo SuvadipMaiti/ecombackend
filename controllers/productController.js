@@ -1,8 +1,14 @@
 const Models = require('../models');
 
 function index(req, res) {
-    const products = 'product list';
-    res.send(products);
+    Models.Product.findAll().then(result => {
+        res.status(200).json(result);
+    }).catch(error => {
+        res.status(500).json({
+            message: "something going wrong",
+            error: error
+        });
+    });
 }
 
 function create(req, res) {
