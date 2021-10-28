@@ -1,4 +1,5 @@
 const Models = require('../models');
+const Validator = require('fastest-validator');
 
 function index(req, res) {
     Models.Product.findAll().then(result => {
@@ -16,6 +17,20 @@ function create(req, res) {
         name: req.body.name,
         description: req.body.description,
         image: req.body.image
+    }
+
+    const schema = {
+        name: { type: "string", optional: false, max: "100" },
+        description: { type: "string", optional: false, max: "500" }
+    }
+
+    const validator = new Validator();
+    const validationResponse = validator.validate(newProduct, schema);
+    if (validationResponse !== true) {
+        return res.status(400).json({
+            message: "validation failed.",
+            error: validationResponse
+        });
     }
 
     Models.Product.create(newProduct).then(result => {
@@ -57,6 +72,20 @@ function update(req, res) {
         name: req.body.name,
         description: req.body.description,
         image: req.body.image
+    }
+
+    const schema = {
+        name: { type: "string", optional: false, max: "100" },
+        description: { type: "string", optional: false, max: "500" }
+    }
+
+    const validator = new Validator();
+    const validationResponse = validator.validate(updateProduct, schema);
+    if (validationResponse !== true) {
+        return res.status(400).json({
+            message: "validation failed.",
+            error: validationResponse
+        });
     }
 
     Models.Product.update(updateProduct, { where: { id: productId } }).then(result => {
