@@ -11,6 +11,7 @@ require('dotenv/config');
 const api = process.env.API_URL;
 
 const productRouter = require('./routers/productRouter');
+const userRouter = require('./routers/userRouter');
 
 
 app.use(express.json());
@@ -18,5 +19,6 @@ app.use(morgan('tiny'));
 
 
 app.use(`${api}/products`, productRouter);
+app.use(`${api}/users`, userRouter);
 
 module.exports = app;
