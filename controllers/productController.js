@@ -53,7 +53,10 @@ function create(req, res) {
 function show(req, res) {
     const id = req.params.id;
 
-    Models.Product.findByPk(id).then(result => {
+    Models.Product.findByPk(id, {
+        attributes: ["name"],
+        include: ["belongsToCategory"]
+    }).then(result => {
         if (result) {
             res.status(200).json(result);
         } else {

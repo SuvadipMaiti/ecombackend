@@ -8,7 +8,7 @@ function index(req, res) {
         include: [{
             model: Product,
             as: "hasManyProducts",
-            attributes: ["name"]
+            attributes: ["name", "description"]
         }]
     }).then(result => {
         res.status(200).json(result);
@@ -61,7 +61,7 @@ function show(req, res) {
         include: [{
             model: Product,
             as: "hasManyProducts",
-            attributes: ["name"]
+            attributes: ["name", "description"]
         }]
     }).then(result => {
         if (result) {
