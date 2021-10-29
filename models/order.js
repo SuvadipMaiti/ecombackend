@@ -3,7 +3,7 @@ const {
     Model
 } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-    class User extends Model {
+    class Order extends Model {
         /**
          * Helper method for defining associations.
          * This method is not a part of Sequelize lifecycle.
@@ -13,16 +13,28 @@ module.exports = (sequelize, DataTypes) => {
             // define association here
         }
     };
-    User.init({
-        name: {
+    Order.init({
+        orderItems: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        shippingAddress1: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        email: {
+        shippingAddress2: {
             type: DataTypes.STRING,
             allowNull: false
         },
-        passwordHash: {
+        city: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        zip: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
+        country: {
             type: DataTypes.STRING,
             allowNull: false
         },
@@ -30,33 +42,24 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING,
             allowNull: false
         },
-        isAdmin: {
-            type: DataTypes.BOOLEAN,
-            defaultValue: false
-        },
-        street: {
+        status: {
             type: DataTypes.STRING,
-            defaultValue: ''
+            allowNull: false,
+            defaultValue: 'Pending'
         },
-        apartment: {
-            type: DataTypes.STRING,
-            defaultValue: ''
+        totalPrice: {
+            type: DataTypes.DECIMAL
         },
-        zip: {
-            type: DataTypes.STRING,
-            defaultValue: ''
+        user: {
+            type: DataTypes.INTEGER
         },
-        city: {
-            type: DataTypes.STRING,
-            defaultValue: ''
-        },
-        country: {
-            type: DataTypes.STRING,
-            defaultValue: ''
+        dateOrderd: {
+            type: DataTypes.DATE,
+            defaultValue: DataTypes.DATE.NOW
         },
     }, {
         sequelize,
-        modelName: 'User',
+        modelName: 'Order',
     });
-    return User;
+    return Order;
 };

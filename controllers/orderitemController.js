@@ -2,7 +2,7 @@ const Models = require('../models');
 const Validator = require('fastest-validator');
 
 function index(req, res) {
-    Models.Product.findAll().then(result => {
+    Models.OrderItem.findAll().then(result => {
         res.status(200).json(result);
     }).catch(error => {
         res.status(500).json({
@@ -13,23 +13,18 @@ function index(req, res) {
 }
 
 function create(req, res) {
-    const newProduct = {
-        name: req.body.name,
-        description: req.body.description,
-        category: req.body.category,
-        countInStock: req.body.countInStock,
-        image: req.body.image
+    const newOrderItem = {
+        quantity: req.body.quantity,
+        product: req.body.product
     }
 
     const schema = {
-        name: { type: "string", optional: false, max: "100" },
-        description: { type: "string", optional: false, max: "500" },
-        category: { type: "number", optional: false, max: "100" },
-        countInStock: { type: "number", optional: false, max: "100" }
+        quantity: { type: "number", optional: false, max: "100" },
+        product: { type: "number", optional: false, max: "100" }
     }
 
     const validator = new Validator();
-    const validationResponse = validator.validate(newProduct, schema);
+    const validationResponse = validator.validate(newOrderItem, schema);
     if (validationResponse !== true) {
         return res.status(400).json({
             message: "validation failed.",
@@ -37,9 +32,9 @@ function create(req, res) {
         });
     }
 
-    Models.Product.create(newProduct).then(result => {
+    Models.OrderItem.create(newOrderItem).then(result => {
         res.status(201).json({
-            message: "Product submited.",
+            message: "OrderItem submited.",
             data: result
         });
     }).catch(error => {
@@ -53,7 +48,7 @@ function create(req, res) {
 function show(req, res) {
     const id = req.params.id;
 
-    Models.Product.findByPk(id).then(result => {
+    Models.OrderItem.findByPk(id).then(result => {
         if (result) {
             res.status(200).json(result);
         } else {
@@ -70,21 +65,20 @@ function show(req, res) {
 }
 
 function update(req, res) {
-    const productId = req.params.id;
+    const orderItemId = req.params.id;
 
-    const updateProduct = {
-        name: req.body.name,
-        description: req.body.description,
-        image: req.body.image
+    const updateOrderItem = {
+        quantity: req.body.quantity,
+        product: req.body.product
     }
 
     const schema = {
-        name: { type: "string", optional: false, max: "100" },
-        description: { type: "string", optional: false, max: "500" }
+        quantity: { type: "number", optional: false, max: "100" },
+        product: { type: "number", optional: false, max: "100" }
     }
 
     const validator = new Validator();
-    const validationResponse = validator.validate(updateProduct, schema);
+    const validationResponse = validator.validate(updateOrderItem, schema);
     if (validationResponse !== true) {
         return res.status(400).json({
             message: "validation failed.",
@@ -92,10 +86,10 @@ function update(req, res) {
         });
     }
 
-    Models.Product.update(updateProduct, { where: { id: productId } }).then(result => {
+    Models.OrderItem.update(updateOrderItem, { where: { id: orderItemId } }).then(result => {
         res.status(201).json({
-            message: "Product updated.",
-            data: updateProduct
+            message: "OrderItem updated.",
+            data: updateOrderItem
         });
     }).catch(error => {
         res.status(500).json({
@@ -106,11 +100,11 @@ function update(req, res) {
 }
 
 function destroy(req, res) {
-    const productId = req.params.id;
+    const orderItemId = req.params.id;
 
-    Models.Product.destroy({ where: { id: productId } }).then(result => {
+    Models.OrderItem.destroy({ where: { id: orderItemId } }).then(result => {
         res.status(200).json({
-            message: "Product deleted."
+            message: "OrderItem deleted."
         });
     }).catch(error => {
         res.status(500).json({

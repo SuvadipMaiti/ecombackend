@@ -1,8 +1,16 @@
 const Models = require('../models');
 const Validator = require('fastest-validator');
+const { Product } = require('../models');
 
 function index(req, res) {
-    Models.Product.findAll().then(result => {
+    Models.Category.findAll({
+        attributes: ["name", "icon"],
+        include: [{
+            model: Product,
+            as: "hasManyProducts",
+            attributes: ["name"]
+        }]
+    }).then(result => {
         res.status(200).json(result);
     }).catch(error => {
         res.status(500).json({
@@ -13,23 +21,18 @@ function index(req, res) {
 }
 
 function create(req, res) {
-    const newProduct = {
+    const newCategory = {
         name: req.body.name,
-        description: req.body.description,
-        category: req.body.category,
-        countInStock: req.body.countInStock,
-        image: req.body.image
+        icon: req.body.icon,
+        color: req.body.color
     }
 
     const schema = {
-        name: { type: "string", optional: false, max: "100" },
-        description: { type: "string", optional: false, max: "500" },
-        category: { type: "number", optional: false, max: "100" },
-        countInStock: { type: "number", optional: false, max: "100" }
+        name: { type: "string", optional: false, max: "100" }
     }
 
     const validator = new Validator();
-    const validationResponse = validator.validate(newProduct, schema);
+    const validationResponse = validator.validate(newCategory, schema);
     if (validationResponse !== true) {
         return res.status(400).json({
             message: "validation failed.",
@@ -37,9 +40,9 @@ function create(req, res) {
         });
     }
 
-    Models.Product.create(newProduct).then(result => {
+    Models.Category.create(newCategory).then(result => {
         res.status(201).json({
-            message: "Product submited.",
+            message: "Category submited.",
             data: result
         });
     }).catch(error => {
@@ -53,7 +56,14 @@ function create(req, res) {
 function show(req, res) {
     const id = req.params.id;
 
-    Models.Product.findByPk(id).then(result => {
+    Models.Category.findByPk(id, {
+        attributes: ["name", "icon"],
+        include: [{
+            model: Product,
+            as: "hasManyProducts",
+            attributes: ["name"]
+        }]
+    }).then(result => {
         if (result) {
             res.status(200).json(result);
         } else {
@@ -70,21 +80,20 @@ function show(req, res) {
 }
 
 function update(req, res) {
-    const productId = req.params.id;
+    const categoryId = req.params.id;
 
-    const updateProduct = {
+    const updateCategory = {
         name: req.body.name,
-        description: req.body.description,
-        image: req.body.image
+        icon: req.body.icon,
+        color: req.body.color
     }
 
     const schema = {
-        name: { type: "string", optional: false, max: "100" },
-        description: { type: "string", optional: false, max: "500" }
+        name: { type: "string", optional: false, max: "100" }
     }
 
     const validator = new Validator();
-    const validationResponse = validator.validate(updateProduct, schema);
+    const validationResponse = validator.validate(updateCategory, schema);
     if (validationResponse !== true) {
         return res.status(400).json({
             message: "validation failed.",
@@ -92,10 +101,10 @@ function update(req, res) {
         });
     }
 
-    Models.Product.update(updateProduct, { where: { id: productId } }).then(result => {
+    Models.Category.update(updateCategory, { where: { id: categoryId } }).then(result => {
         res.status(201).json({
-            message: "Product updated.",
-            data: updateProduct
+            message: "Category updated.",
+            data: updateCategory
         });
     }).catch(error => {
         res.status(500).json({
@@ -106,11 +115,11 @@ function update(req, res) {
 }
 
 function destroy(req, res) {
-    const productId = req.params.id;
+    const categoryId = req.params.id;
 
-    Models.Product.destroy({ where: { id: productId } }).then(result => {
+    Models.Category.destroy({ where: { id: categoryId } }).then(result => {
         res.status(200).json({
-            message: "Product deleted."
+            message: "Category deleted."
         });
     }).catch(error => {
         res.status(500).json({
